@@ -349,22 +349,36 @@ void CImageMakerDlg::ResizeImage(IplImage* img, int index)
 void CImageMakerDlg::OnBnClickedButtonBootload()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	CPathManager pathManager;
+
+
 	BROWSEINFO  bi;
 	bi.hwndOwner=NULL;
-	bi.pidlRoot=NULL;
+	
 	bi.pszDisplayName=NULL;
-	bi.lpszTitle=NULL;
+	bi.lpszTitle=_T("请选择BOOTLOAD目录(eGon)");
 	bi.ulFlags=0;
 	bi.lpfn =NULL;
 	bi.iImage =0;
+	
+	LPITEMIDLIST pidlSource = NULL;
+	ULONG nCharsParsed = 0;
+	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
+	LPSHELLFOLDER pShellFolder = NULL;
+	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
+	TCHAR topDir[MAX_PATH];
+	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
+	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
+	bi.pidlRoot=pidlSource;
 	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
+	pShellFolder->Release();
 	if(!pidl)
 		return;
 	TCHAR  szDisplayName[255];
 	SHGetPathFromIDList(pidl,szDisplayName);
 
-	CPathManager pathManager;
-	CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
+
+	CopyFolder(szDisplayName, pathManager.GetWorkSpacePath().c_str());
 	wstring index = _T("BootLoad");
 	wstring logContent(_T("BootLoadPath:"));
 	logContent += szDisplayName;
@@ -376,22 +390,33 @@ void CImageMakerDlg::OnBnClickedButtonBootload()
 void CImageMakerDlg::OnBnClickedButtonApp()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	CPathManager pathManager;
 	BROWSEINFO  bi;
 	bi.hwndOwner=NULL;
 	bi.pidlRoot=NULL;
 	bi.pszDisplayName=NULL;
-	bi.lpszTitle=NULL;
+	bi.lpszTitle=_T("请选择APP目录");
 	bi.ulFlags=0;
 	bi.lpfn =NULL;
 	bi.iImage =0;
+	LPITEMIDLIST pidlSource = NULL;
+	ULONG nCharsParsed = 0;
+	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
+	LPSHELLFOLDER pShellFolder = NULL;
+	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
+	TCHAR topDir[MAX_PATH];
+	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
+	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
+	bi.pidlRoot=pidlSource;
 	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
+	pShellFolder->Release();
 	if(!pidl)
 		return;
 	TCHAR  szDisplayName[255];
 	SHGetPathFromIDList(pidl,szDisplayName);
-	
-	CPathManager pathManager;
-	CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
+	wstring rootRootPath(pathManager.GetRootPath());
+	rootRootPath += _T("\\root");
+	CopyFolder(szDisplayName, rootRootPath.c_str());
 	wstring index = _T("App");
 	wstring logContent(_T("AppPath:"));
 	logContent += szDisplayName;
@@ -430,5 +455,34 @@ BOOL CImageMakerDlg::CopyFolder(LPCTSTR lpszFromPath,LPCTSTR lpszToPath)
 void CImageMakerDlg::OnBnClickedButtonBootfs()
 {
 	// TODO: 在此添加控件通知处理程序代码
-
+	CPathManager pathManager;
+	BROWSEINFO  bi;
+	bi.hwndOwner=NULL;
+	bi.pidlRoot=NULL;
+	bi.pszDisplayName=NULL;
+	bi.lpszTitle=_T("请选择BootFS目录");
+	bi.ulFlags=0;
+	bi.lpfn =NULL;
+	bi.iImage =0;
+	LPITEMIDLIST pidlSource = NULL;
+	ULONG nCharsParsed = 0;
+	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
+	LPSHELLFOLDER pShellFolder = NULL;
+	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
+	TCHAR topDir[MAX_PATH];
+	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
+	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
+	bi.pidlRoot=pidlSource;
+	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
+	pShellFolder->Release();
+	if(!pidl)
+		return;
+	TCHAR  szDisplayName[255];
+	SHGetPathFromIDList(pidl,szDisplayName);
+	
+	CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
+	wstring index = _T("Bootfs");
+	wstring logContent(_T("BootfsPath:"));
+	logContent += szDisplayName;
+	CLogManager::GetInstance().AddLog(index, logContent);
 }

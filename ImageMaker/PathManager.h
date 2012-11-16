@@ -37,11 +37,29 @@ public:
 		*(p+1) = '\0';
 		toolPath_ = name;
 		toolPath_ += _T("tools\\");
+
+		*p = '\0';
+		p = _tcsrchr(name, '\\');
+		if (p == NULL)
+		{
+			MessageBox(NULL, _T("目录有问题"), NULL, MB_OK|MB_TOPMOST);
+			ExitProcess(-1);
+		}
+		*(p+1) = '\0';
+		topDirPath_ = name;
 	}
 	~CPathManager(void);
 	wstring& GetRootPath()
 	{
 		return rootPath_;
+	}
+	wstring& GetTopDirPath()
+	{
+		return topDirPath_;
+	}
+	wstring& GetWorkSpacePath()
+	{
+		return workspacePath_;
 	}
 	wstring&& GetMemoryPath()
 	{
@@ -392,5 +410,6 @@ private:
 	wstring appDirPath_;
 	wstring logFilePath_;
 	wstring projectFilePath_;
+	wstring topDirPath_;
 };
 

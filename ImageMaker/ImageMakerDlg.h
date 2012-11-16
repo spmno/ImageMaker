@@ -51,4 +51,6 @@ private:
 	afx_msg void OnBnClickedButtonApp();
 	CComboBox projectSelector;
 	CButton makeButton_;
+public:
+	afx_msg void OnBnClickedButtonBootfs();
 };

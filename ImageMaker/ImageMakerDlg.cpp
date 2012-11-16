@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(CImageMakerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SELECT_LOGO2, &CImageMakerDlg::OnBnClickedButtonSelectLogo2)
 	ON_BN_CLICKED(IDC_BUTTON_BOOTLOAD, &CImageMakerDlg::OnBnClickedButtonBootload)
 	ON_BN_CLICKED(IDC_BUTTON_APP, &CImageMakerDlg::OnBnClickedButtonApp)
+	ON_BN_CLICKED(IDC_BUTTON_BOOTFS, &CImageMakerDlg::OnBnClickedButtonBootfs)
 END_MESSAGE_MAP()
 
 // CImageMakerDlg 消息处理程序
@@ -423,5 +424,11 @@ BOOL CImageMakerDlg::CopyFolder(LPCTSTR lpszFromPath,LPCTSTR lpszToPath)
 	FileOp.wFunc = FO_COPY;
 
 	return SHFileOperation(&FileOp) == 0;
+
+}
+
+void CImageMakerDlg::OnBnClickedButtonBootfs()
+{
+	// TODO: 在此添加控件通知处理程序代码
 
 }

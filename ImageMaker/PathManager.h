@@ -314,7 +314,7 @@ public:
 	wstring&& GetLogo2Path()
 	{
 		logo2Path_ = rootPath_;
-		logo2Path_ += _T("root\\config\\logo.bmp");
+		logo2Path_ += _T("root\\driver\\logo.bmp");
 		return std::move(logo2Path_);
 	}
 

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ImageMaker.cpp" />
+    <ClCompile Include="ImageMakerImp.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="PathManager.cpp">
+      <Filter>Path</Filter>
+    </ClCompile>
+    <ClCompile Include="CvvImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory256M.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory512M.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryConfig.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectParser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="StdioFileEx.cpp" />
+    <ClCompile Include="AreaHelper.cpp" />
+    <ClCompile Include="ImageMakerDlg.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImageMaker.h" />
+    <ClInclude Include="ImageMakerImp.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="PathManager.h">
+      <Filter>Path</Filter>
+    </ClInclude>
+    <ClInclude Include="CvvImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory256M.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory512M.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryConfig.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="StdioFileEx.h" />
+    <ClInclude Include="TemplateSmartPtr.h" />
+    <ClInclude Include="AreaHelper.h" />
+    <ClInclude Include="ImageMakerDlg.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Path">
+      <UniqueIdentifier>{80f391fc-4f4b-45a5-9397-75433ed9b589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{d4054708-c660-4031-a64d-6558ab11722c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{cc960d53-2e70-4317-95f8-73c131c303a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{bc6cdf5a-b417-41df-b56d-227fc4e711b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{3ee49526-27c8-4fc1-b1cc-2f3bf653280f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{e6b435c0-4560-4b66-b705-b120d7961fba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{9b0e7d50-ee00-4a33-a579-368618c03ecb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ImageMaker.ico">
+      <Filter>Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ImageMaker.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\ImageMaker.rc2">
+      <Filter>Resource</Filter>
+    </None>
+  </ItemGroup>
+</Project>

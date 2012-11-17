@@ -25,13 +25,20 @@
     <ClCompile Include="ProjectParser.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
-    <ClCompile Include="StdioFileEx.cpp" />
-    <ClCompile Include="AreaHelper.cpp" />
     <ClCompile Include="ImageMakerDlg.cpp">
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="ProgressDialog.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="StdioFileEx.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="MakerTools.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="AreaHelper.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,7 +46,6 @@
     <ClInclude Include="ImageMakerImp.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="PathManager.h">
       <Filter>Path</Filter>
     </ClInclude>
@@ -61,14 +67,26 @@
     <ClInclude Include="ProjectParser.h">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="StdioFileEx.h" />
-    <ClInclude Include="TemplateSmartPtr.h" />
-    <ClInclude Include="AreaHelper.h" />
     <ClInclude Include="ImageMakerDlg.h">
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="ProgressDialog.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StdioFileEx.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateSmartPtr.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="MakerTools.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="AreaHelper.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +113,9 @@
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{9b0e7d50-ee00-4a33-a579-368618c03ecb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{d7c964ed-f3a4-4f4f-a23a-d7b5a1f9945d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -112,6 +112,7 @@
     <ClInclude Include="ImageMakerDlg.h" />
     <ClInclude Include="ImageMakerImp.h" />
     <ClInclude Include="LogManager.h" />
+    <ClInclude Include="MakerTools.h" />
     <ClInclude Include="Memory256M.h" />
     <ClInclude Include="Memory512M.h" />
     <ClInclude Include="MemoryConfig.h" />
@@ -131,6 +132,7 @@
     <ClCompile Include="ImageMakerDlg.cpp" />
     <ClCompile Include="ImageMakerImp.cpp" />
     <ClCompile Include="LogManager.cpp" />
+    <ClCompile Include="MakerTools.cpp" />
     <ClCompile Include="Memory256M.cpp" />
     <ClCompile Include="Memory512M.cpp" />
     <ClCompile Include="MemoryConfig.cpp" />

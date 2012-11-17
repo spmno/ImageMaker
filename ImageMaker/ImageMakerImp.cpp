@@ -10,6 +10,7 @@
 #include "LogManager.h"
 #include "StdioFileEx.h"
 #include "ProgressDialog.h"
+#include "MakerTools.h"
 
 using namespace std;
 
@@ -145,7 +146,41 @@ bool CImageMakerImp::LCDConfig()
 	wstring projectIndex = _T("Project");
 	wstring projectContent = projectFormat.str();
 	CLogManager::GetInstance().AddLog(projectIndex, projectContent);
-	return CopyFileInt(sourcePathName, targetPathName);
+	if (!CopyFileInt(sourcePathName, targetPathName))
+	{
+		MessageBox(NULL, sourcePathName.c_str(), _T("复制项目文件错误"), MB_OK|MB_TOPMOST);
+		return false;
+	}
+
+	wstring filterDir(pathManager.GetTopDirPath());
+	
+	if (projectName_.compare(_T("H8033V")) == 0)
+	{
+		filterDir += _T("Filter\\H8033V");
+	}
+	else if (projectName_.compare(_T("DS4389GDA")) == 0)
+	{
+		filterDir += _T("Filter\\DS4389GDA");
+	}
+	else if (projectName_.compare(_T("BM-5133V")) == 0)
+	{
+		filterDir += _T("Filter\\DS4389GDA");
+	}
+	wstring targetFilterDir(pathManager.GetRootPath());
+	targetFilterDir += _T("root");
+	wstring targetFilterPath(pathManager.GetRootPath());
+	targetFilterPath += _T("root\\Filter");
+
+	boost::filesystem::remove_all(targetFilterPath);
+	Sleep(1000);
+	CMakerTools tools;
+	if (tools.CopyFolder(filterDir.c_str(), targetFilterDir.c_str()) == FALSE)
+	{
+		return false;
+	}
+	wstring filterIndex = _T("解码器：");
+	CLogManager::GetInstance().AddLog(filterIndex, filterDir);
+	return true;
 }
 
 bool CImageMakerImp::DebugReleaseConfig()

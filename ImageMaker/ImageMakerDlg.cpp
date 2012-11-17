@@ -13,6 +13,7 @@
 #include "ProjectParser.h"
 #include "LogManager.h"
 #include "AreaHelper.h"
+#include "MakerTools.h"
 
 #define IMAGE_WIDTH 256
 #define IMAGE_HEIGHT 154
@@ -57,6 +58,7 @@ BEGIN_MESSAGE_MAP(CImageMakerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_BOOTLOAD, &CImageMakerDlg::OnBnClickedButtonBootload)
 	ON_BN_CLICKED(IDC_BUTTON_APP, &CImageMakerDlg::OnBnClickedButtonApp)
 	ON_BN_CLICKED(IDC_BUTTON_BOOTFS, &CImageMakerDlg::OnBnClickedButtonBootfs)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CImageMakerDlg::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 // CImageMakerDlg 消息处理程序
@@ -377,8 +379,8 @@ void CImageMakerDlg::OnBnClickedButtonBootload()
 	TCHAR  szDisplayName[255];
 	SHGetPathFromIDList(pidl,szDisplayName);
 
-
-	CopyFolder(szDisplayName, pathManager.GetWorkSpacePath().c_str());
+	CMakerTools tools;
+	tools.CopyFolder(szDisplayName, pathManager.GetWorkSpacePath().c_str());
 	wstring index = _T("BootLoad");
 	wstring logContent(_T("BootLoadPath:"));
 	logContent += szDisplayName;
@@ -416,7 +418,12 @@ void CImageMakerDlg::OnBnClickedButtonApp()
 	SHGetPathFromIDList(pidl,szDisplayName);
 	wstring rootRootPath(pathManager.GetRootPath());
 	rootRootPath += _T("\\root");
-	CopyFolder(szDisplayName, rootRootPath.c_str());
+	wstring appPath(rootRootPath);
+	appPath += _T("\\F33APP");
+	boost::filesystem::remove_all(appPath);
+	Sleep(1000);
+	CMakerTools tools;
+	tools.CopyFolder(szDisplayName, rootRootPath.c_str());
 	wstring index = _T("App");
 	wstring logContent(_T("AppPath:"));
 	logContent += szDisplayName;
@@ -424,33 +431,6 @@ void CImageMakerDlg::OnBnClickedButtonApp()
 	//MessageBox(str,NULL,MB_OK);
 }
 
-BOOL CImageMakerDlg::CopyFolder(LPCTSTR lpszFromPath,LPCTSTR lpszToPath)
-{
-	int nLengthFrm = _tcslen(lpszFromPath);
-
-	TCHAR *NewPathFrm = new TCHAR[nLengthFrm+2];
-
-	_tcscpy(NewPathFrm,lpszFromPath);
-
-	NewPathFrm[nLengthFrm] = '\0';
-
-	NewPathFrm[nLengthFrm+1] = '\0';
-
-	SHFILEOPSTRUCT FileOp;
-
-	ZeroMemory((void*)&FileOp,sizeof(SHFILEOPSTRUCT));
-
-	FileOp.fFlags = FOF_NOCONFIRMATION ;
-	FileOp.hNameMappings = NULL;
-	FileOp.hwnd = NULL;
-	FileOp.lpszProgressTitle = NULL;
-	FileOp.pFrom = NewPathFrm;
-	FileOp.pTo = lpszToPath;
-	FileOp.wFunc = FO_COPY;
-
-	return SHFileOperation(&FileOp) == 0;
-
-}
 
 void CImageMakerDlg::OnBnClickedButtonBootfs()
 {
@@ -480,9 +460,23 @@ void CImageMakerDlg::OnBnClickedButtonBootfs()
 	TCHAR  szDisplayName[255];
 	SHGetPathFromIDList(pidl,szDisplayName);
 	
-	CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
+	CMakerTools tools;
+	tools.CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
 	wstring index = _T("Bootfs");
 	wstring logContent(_T("BootfsPath:"));
 	logContent += szDisplayName;
 	CLogManager::GetInstance().AddLog(index, logContent);
+}
+
+
+void CImageMakerDlg::OnCbnSelchangeCombo1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// 准备在这做解码选择，考虑之后还是放到MAKE里吧
+	int position = projectSelector.GetCurSel();
+	CPathManager pathManager;
+	wstring filterDir(pathManager.GetTopDirPath());
+	CString selectedItemContent;
+	projectSelector.GetLBText(position, selectedItemContent);
+
 }

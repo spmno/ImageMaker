@@ -36,6 +36,8 @@ private:
 	afx_msg void OnBnClickedButtonMake();
 	afx_msg void OnBnClickedButtonExit();
 	afx_msg void OnBnClickedButtonSelectLogo();
+	afx_msg void OnBnClickedButtonBootfs();
+	afx_msg void OnCbnSelchangeCombo1();
 	void ShowImage(IplImage* img, UINT ID);
 	void ResizeImage(IplImage* img, int index);
 	CImageMakerImp imageMakerImp_;
@@ -45,12 +47,10 @@ private:
 	CString logo2FilePath_;
 	IplImage* logo1Image_;
 	IplImage* logo2Image_;
-	BOOL CopyFolder(LPCTSTR lpszFromPath,LPCTSTR lpszToPath);
 	afx_msg void OnBnClickedButtonSelectLogo2();
 	afx_msg void OnBnClickedButtonBootload();
 	afx_msg void OnBnClickedButtonApp();
 	CComboBox projectSelector;
 	CButton makeButton_;
-public:
-	afx_msg void OnBnClickedButtonBootfs();
+
 };

@@ -69,7 +69,7 @@ bool CMakerTools::SelectDir(const wstring& title, wstring& selectedDir) const
 	return true;
 }
 
-bool CMakerTools::CopyFileInt(wstring& sourceFileName, wstring& targetFileName) const
+bool CMakerTools::CopyFileInt(const wstring& sourceFileName, const wstring& targetFileName) const
 {
 	
 	const boost::filesystem::path currentPath(sourceFileName);
@@ -94,5 +94,26 @@ bool CMakerTools::CopyFileInt(wstring& sourceFileName, wstring& targetFileName) 
 		return false;
 	}
 
+	return true;
+}
+
+bool CMakerTools::ExcuteCommand(const wstring& sourceExeFilePath, const wstring& params) const
+{
+	CPathManager pathManager;
+	SHELLEXECUTEINFO exeInfo;
+	exeInfo.cbSize = sizeof(exeInfo);
+	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	exeInfo.hwnd = NULL;
+	exeInfo.lpVerb = NULL;
+	exeInfo.lpFile = sourceExeFilePath.c_str();
+	exeInfo.lpParameters = params.c_str();
+	exeInfo.lpDirectory = pathManager.GetRootPath().c_str();;
+	exeInfo.nShow = SW_MINIMIZE;
+	exeInfo.hInstApp = NULL;
+	if (!ShellExecuteEx(&exeInfo))
+	{
+		return false;
+	}
+	WaitForSingleObject(exeInfo.hProcess, 10000);
 	return true;
 }

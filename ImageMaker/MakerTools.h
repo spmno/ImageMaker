@@ -9,6 +9,7 @@ public:
 	~CMakerTools(void);
 	BOOL CopyFolder(LPCTSTR lpszFromPath,LPCTSTR lpszToPath);
 	bool SelectDir(const wstring& title, wstring& selectedDir) const;
-	bool CopyFileInt(wstring& sourceFileName, wstring& targetFileName) const;
+	bool CopyFileInt(const wstring& sourceFileName, const wstring& targetFileName) const;
+	bool ExcuteCommand(const wstring& sourceExeFilePath, const wstring& params) const;
 };
 

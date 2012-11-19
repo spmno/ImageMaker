@@ -53,4 +53,7 @@ private:
 	CComboBox projectSelector;
 	CButton makeButton_;
 
+public:
+	afx_msg void OnBnClickedRadio1();
+	afx_msg void OnBnClickedRadio2();
 };

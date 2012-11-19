@@ -59,6 +59,8 @@ BEGIN_MESSAGE_MAP(CImageMakerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_APP, &CImageMakerDlg::OnBnClickedButtonApp)
 	ON_BN_CLICKED(IDC_BUTTON_BOOTFS, &CImageMakerDlg::OnBnClickedButtonBootfs)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CImageMakerDlg::OnCbnSelchangeCombo1)
+	ON_BN_CLICKED(IDC_RADIO1, &CImageMakerDlg::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, &CImageMakerDlg::OnBnClickedRadio2)
 END_MESSAGE_MAP()
 
 // CImageMakerDlg 消息处理程序
@@ -166,7 +168,6 @@ void CImageMakerDlg::OnBnClickedButtonSelectNk()
 	{
 		nkPathName_ = fileDialog.GetPathName();
 		
-		wstring nkPath(nkPathName_.GetBuffer());
 		wstring nkName(fileDialog.GetFileName().GetBuffer());
 		int splitPostion = nkName.find(_T("_"));
 		if (splitPostion != string::npos)
@@ -176,11 +177,13 @@ void CImageMakerDlg::OnBnClickedButtonSelectNk()
 			areaHelper.GetAreaName(codeName);
 			imageMakerImp_.SetImageTail(codeName);
 		}
-		imageMakerImp_.SetNKPath(nkPath);
-		wstring nkIndex = _T("NK");
-		wstring nkLogContent(_T("NKPATH:"));
-		nkLogContent += nkPath;
-		CLogManager::GetInstance().AddLog(nkIndex, nkLogContent);
+		else
+		{
+			wstring noneTail(_T(""));
+			imageMakerImp_.SetImageTail(noneTail);
+		}
+
+
 		UpdateData(FALSE);
 	}
 }
@@ -191,11 +194,16 @@ void CImageMakerDlg::OnBnClickedButtonMake()
 	// TODO: 在此添加控件通知处理程序代码
 	makeButton_.EnableWindow(FALSE);
 	UpdateData(TRUE);
+
 	if (nkPathName_.GetLength() == 0)
 	{
 		MessageBox(_T("请选择NK"));
 		return ;
 	}
+
+	//Set nk path
+	wstring nkPath(nkPathName_.GetBuffer());
+	imageMakerImp_.SetNKPath(nkPath);
 	if (memorySize_ == 0)
 	{
 		imageMakerImp_.SetMemorySize(CImageMakerImp::MEMORY_256M);
@@ -205,7 +213,7 @@ void CImageMakerDlg::OnBnClickedButtonMake()
 		imageMakerImp_.SetMemorySize(CImageMakerImp::MEMORY_512M);
 	}
 
-	
+	//Set project type
 	int index = projectSelector.GetCurSel();
 	CString strCBText;
 	projectSelector.GetLBText( index, strCBText);
@@ -427,4 +435,18 @@ void CImageMakerDlg::OnCbnSelchangeCombo1()
 	CString selectedItemContent;
 	projectSelector.GetLBText(position, selectedItemContent);
 
+}
+
+
+void CImageMakerDlg::OnBnClickedRadio1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	memorySize_ = 0;
+}
+
+
+void CImageMakerDlg::OnBnClickedRadio2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	memorySize_ = 1;
 }

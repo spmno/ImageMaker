@@ -34,6 +34,7 @@ bool CImageMakerImp::Make()
 	progressDialog.Create(IDD_DIALOG_PROGRESS);
 	progressDialog.ShowWindow(SW_SHOW);
 	progressDialog.CenterWindow();
+	NKConfig();
 	FunctionBind();
 	progressDialog.progressController_.SetRange(0, functionContainer_.size());
 	progressDialog.progressController_.SetStep(1);
@@ -172,51 +173,36 @@ bool CImageMakerImp::DebugReleaseConfig()
 
 bool CImageMakerImp::MsmbrConfig()
 {
+	CMakerTools tools;
 	CPathManager pathManager;
 	wstring&& msmbrExeName = pathManager.GetMsmbrExePath();
 	wstring&& sysConfigFileName = pathManager.GetSysConfigPath();
-	boost::wformat argmentFormat(_T("-cfg  %1% -user  FAT_APPFS  -o  msmbr.fex > log.txt"));
+	boost::wformat argmentFormat(_T("-cfg  %1% -user  FAT_APPFS  -o  msmbr.fex "));
 	argmentFormat % sysConfigFileName;
 	wstring argmentContent = argmentFormat.str();
-	SHELLEXECUTEINFO exeInfo;
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = msmbrExeName.c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = pathManager.GetRootPath().c_str();
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(msmbrExeName, argmentContent))
 	{
+		MessageBox(NULL, _T("MsmbrConfig ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	return true;
 }
 
 bool CImageMakerImp::BootfsISOConfig()
 {
 	CPathManager pathManager;
+	CMakerTools tools;
 	wstring&& scriptExeName = pathManager.GetScriptPath();
 	wstring&& sysConfig1Path = pathManager.GetSysConfig1Path();
 	
-	SHELLEXECUTEINFO exeInfo;
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = scriptExeName.c_str();
-	exeInfo.lpParameters = sysConfig1Path.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+	if (!tools.ExcuteCommand(scriptExeName, sysConfig1Path))
 	{
+		MessageBox(NULL, _T("bootfs script ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	CMakerTools tools;
+
 	if (!tools.CopyFileInt(pathManager.GetSourceNand0PathName(), pathManager.GetTargetNand0PathName()))
 	{
 		MessageBox(NULL, _T("∏¥÷∆nand boot0 ß∞‹"), NULL, MB_OK|MB_TOPMOST);
@@ -229,29 +215,21 @@ bool CImageMakerImp::BootfsISOConfig()
 		return false;
 	}
 
+	//Make update params
 	wstring updateExePath = pathManager.GetUpdateToolPathName();
-	boost::wformat argmentFormat(_T(" %1% %2% %3% %4%"));
+	boost::wformat argmentFormat(_T(" %1% %2% %3%"));
 	argmentFormat % pathManager.GetSysConfig1BinPath();
 	argmentFormat % pathManager.GetTargetNand0PathName();
 	argmentFormat % pathManager.GetTargetNand1PathName();
-	argmentFormat % _T("> log.txt");
+
 	wstring argmentContent = argmentFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = updateExePath.c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(updateExePath, argmentContent))
 	{
 		MessageBox(NULL, _T("…˝º∂nand boot ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
 
-	WaitForSingleObject(exeInfo.hProcess, 10000);
 	if (!tools.CopyFileInt(pathManager.GetSourceSdcardBoot0PathName(), pathManager.GetTargetSdcardBoot0PathName()))
 	{
 		MessageBox(NULL, _T("∏¥÷∆sdcard boot0 ß∞‹"), NULL, MB_OK|MB_TOPMOST);
@@ -264,29 +242,20 @@ bool CImageMakerImp::BootfsISOConfig()
 		return false;
 	}
 
-
-	boost::wformat argmentSdcardFormat(_T(" %1% %2% %3% %4% %5%"));
+	//Make sd params
+	boost::wformat argmentSdcardFormat(_T(" %1% %2% %3% %4%"));
 	argmentSdcardFormat % pathManager.GetSysConfig1BinPath();
 	argmentSdcardFormat % pathManager.GetTargetSdcardBoot0PathName();
 	argmentSdcardFormat % pathManager.GetTargetSdcardBoot1PathName();
 	argmentSdcardFormat % _T("SDMMC_CARD");
-	argmentSdcardFormat % _T("> log.txt");
 	argmentContent = argmentSdcardFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = updateExePath.c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(updateExePath, argmentContent))
 	{
-		MessageBox(NULL, _T("…˝º∂nand boot ß∞‹"), NULL, MB_OK|MB_TOPMOST);
+		MessageBox(NULL, _T("…˝º∂sdcard boot ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	boost::filesystem::remove(pathManager.GetBootfsScriptPathName());
 	boost::filesystem::remove(pathManager.GetBootfsScript0PathName());
 
@@ -307,100 +276,66 @@ bool CImageMakerImp::BootfsISOConfig()
 bool CImageMakerImp::MBRConfig()
 {
 	CPathManager pathManager;
+	CMakerTools tools;
 	boost::filesystem::remove(pathManager.GetSysConfigBinPath());
 	
-	SHELLEXECUTEINFO exeInfo;
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetScriptOldPath().c_str();
-	exeInfo.lpParameters = pathManager.GetSysConfigPath().c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+	if (!tools.ExcuteCommand(pathManager.GetScriptOldPath(), pathManager.GetSysConfigPath()))
 	{
 		MessageBox(NULL, _T("script old ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
-	boost::wformat argmentFormat(_T(" %1% %2% %3%"));
+
+	boost::wformat argmentFormat(_T(" %1% %2%"));
 	argmentFormat % pathManager.GetSysConfigBinPath();
 	argmentFormat % pathManager.GetCardMBRPath();
-	argmentFormat % _T("> log.txt");
 	wstring argmentContent = argmentFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_DEFAULT;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetUpdateMBRPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetUpdateMBRPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("…˝º∂mbr ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	return true;
 }
 
 bool CImageMakerImp::BootfsConfig()
 {
 	CPathManager pathManager;
+	CMakerTools tools;
 	boost::filesystem::remove(pathManager.GetBootfsPath());
-	SHELLEXECUTEINFO exeInfo;
+
 	boost::wformat argmentFormat(_T(" %1% %2%"));
 	argmentFormat % pathManager.GetBootfsIniPath();
 	argmentFormat % pathManager.GetSplitBinPath();
-
 	wstring argmentContent = argmentFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetFsBuildPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = pathManager.GetRootPath().c_str();
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetFsBuildPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("bootfs ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	return true;
 }
 
 bool CImageMakerImp::AppfsConfig()
 {
 	CPathManager pathManager;
-	SHELLEXECUTEINFO exeInfo;
+	CMakerTools tools;
+
 	boost::wformat argmentFormat(_T(" %1% %2% %3%"));
 	argmentFormat % pathManager.GetRootIniPath();
 	argmentFormat % pathManager.GetSplitBinPath();
 	argmentFormat % _T(" -zero");
-
 	wstring argmentContent = argmentFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetFsBuildPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory =  pathManager.GetRootPath().c_str();
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetFsBuildPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("appfs ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	LogAppInfo();
 	return true;
 }
@@ -408,69 +343,44 @@ bool CImageMakerImp::AppfsConfig()
 bool CImageMakerImp::VeryfyFileConfig()
 {
 	CPathManager pathManager;
-	
-	SHELLEXECUTEINFO exeInfo;
+	CMakerTools tools;
+
+	//Make nk params
 	boost::wformat argmentFormat(_T(" %1% %2%"));
 	argmentFormat % pathManager.GetNKPath();
 	argmentFormat % pathManager.GetNKVPath();
-
 	wstring argmentContent = argmentFormat.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetFileAddSumPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetFileAddSumPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("add sum nk ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
+	//Make bootfs params
 	boost::wformat argmentFormatBoot(_T(" %1% %2%"));
 	argmentFormatBoot % pathManager.GetBootfsPath();
 	argmentFormatBoot % pathManager.GetBootFsVPath();
-
 	argmentContent = argmentFormatBoot.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetFileAddSumPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetFileAddSumPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("add sum boot ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
 
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+	//Make app params
 	boost::wformat argmentFormatApp(_T(" %1% %2%"));
 	argmentFormatApp % pathManager.GetAppFsPath();
 	argmentFormatApp % pathManager.GetAppFsVPath();
-
 	argmentContent = argmentFormatApp.str();
-	exeInfo.cbSize = sizeof(exeInfo);
-	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	exeInfo.hwnd = NULL;
-	exeInfo.lpVerb = NULL;
-	exeInfo.lpFile = pathManager.GetFileAddSumPath().c_str();
-	exeInfo.lpParameters = argmentContent.c_str();
-	exeInfo.lpDirectory = NULL;
-	exeInfo.nShow = SW_MINIMIZE;
-	exeInfo.hInstApp = NULL;
-	if (!ShellExecuteEx(&exeInfo))
+
+	if (!tools.ExcuteCommand(pathManager.GetFileAddSumPath(), argmentContent))
 	{
 		MessageBox(NULL, _T("add sum app ß∞‹"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
-	WaitForSingleObject(exeInfo.hProcess, 10000);
+
 	return true;
 }
 
@@ -591,6 +501,14 @@ bool CImageMakerImp::RenameImage()
 		//MessageBox(NULL, pathManager.GetImgPath().c_str(), newPath.c_str(), MB_OK|MB_TOPMOST);
 	}
 	return true;
+}
+
+void CImageMakerImp::NKConfig()
+{
+	wstring nkIndex = _T("NK");
+	wstring nkLogContent(_T("NKPATH:"));
+	nkLogContent += nkSourcePath_;
+	CLogManager::GetInstance().AddLog(nkIndex, nkLogContent);
 }
 
 void CImageMakerImp::FunctionBind()

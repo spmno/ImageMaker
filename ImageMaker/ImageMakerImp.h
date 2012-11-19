@@ -42,6 +42,7 @@ public:
 	}
 	bool Make();
 private:
+	void NKConfig();
 	bool DeleteNKAndImg();
 	bool MemoryConfig();
 	bool LCDConfig();

@@ -346,7 +346,7 @@ public:
 	wstring&& GetAppDirPath()
 	{
 		appDirPath_ = rootPath_;
-		appDirPath_ += _T("F33_APP\\");
+		appDirPath_ += _T("root\\F33APP");
 		return std::move(appDirPath_);
 	}
 

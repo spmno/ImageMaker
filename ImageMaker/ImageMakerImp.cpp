@@ -26,33 +26,7 @@ CImageMakerImp::~CImageMakerImp(void)
 {
 }
 
-bool CImageMakerImp::CopyFileInt(wstring& sourceFileName, wstring& targetFileName)
-{
-	
-	const boost::filesystem::path currentPath(sourceFileName);
-	const boost::filesystem::path targetPath(targetFileName);
 
-	if (!boost::filesystem::exists(currentPath))
-	{
-		MessageBox(NULL, sourceFileName.c_str(), _T("ÕÒ²»µ½"), MB_OK|MB_TOPMOST);
-		ExitProcess(-1);
-	}
-
-	try
-	{
-		boost::filesystem::copy_file(currentPath, targetPath, boost::filesystem::copy_option::overwrite_if_exists);
-	}
-	catch(boost::filesystem::filesystem_error e)
-	{
-		TCHAR errorReport[MAX_PATH];
-		MultiByteToWideChar(GetACP(), 0, e.what(), strlen(e.what()), errorReport, MAX_PATH);
-		MessageBox(NULL, errorReport, _T("copy file error"), MB_OK|MB_TOPMOST);
-		OutputDebugStringA(e.what());
-		return false;
-	}
-
-	return true;
-}
 
 bool CImageMakerImp::Make()
 {
@@ -122,7 +96,8 @@ bool CImageMakerImp::MemoryConfig()
 	wstring logContent = logFormat.str();
 	wstring index = _T("Mem");
 	CLogManager::GetInstance().AddLog(index, logContent);
-	return CopyFileInt(currentMemoryName, targetPathName);
+	CMakerTools tools;
+	return tools.CopyFileInt(currentMemoryName, targetPathName);
 }
 
 bool CImageMakerImp::LCDConfig()
@@ -146,7 +121,8 @@ bool CImageMakerImp::LCDConfig()
 	wstring projectIndex = _T("Project");
 	wstring projectContent = projectFormat.str();
 	CLogManager::GetInstance().AddLog(projectIndex, projectContent);
-	if (!CopyFileInt(sourcePathName, targetPathName))
+	CMakerTools tools;
+	if (!tools.CopyFileInt(sourcePathName, targetPathName))
 	{
 		MessageBox(NULL, sourcePathName.c_str(), _T("¸´ÖÆÏîÄ¿ÎÄ¼þ´íÎó"), MB_OK|MB_TOPMOST);
 		return false;
@@ -156,15 +132,15 @@ bool CImageMakerImp::LCDConfig()
 	
 	if (projectName_.compare(_T("H8033V")) == 0)
 	{
-		filterDir += _T("Filter\\H8033V");
+		filterDir += _T("Filter\\H8033V\\Filter");
 	}
 	else if (projectName_.compare(_T("DS4389GDA")) == 0)
 	{
-		filterDir += _T("Filter\\DS4389GDA");
+		filterDir += _T("Filter\\DS4389GDA\\Filter");
 	}
 	else if (projectName_.compare(_T("BM-5133V")) == 0)
 	{
-		filterDir += _T("Filter\\DS4389GDA");
+		filterDir += _T("Filter\\DS4389GDA\\Filter");
 	}
 	wstring targetFilterDir(pathManager.GetRootPath());
 	targetFilterDir += _T("root");
@@ -173,13 +149,16 @@ bool CImageMakerImp::LCDConfig()
 
 	boost::filesystem::remove_all(targetFilterPath);
 	Sleep(1000);
-	CMakerTools tools;
+
 	if (tools.CopyFolder(filterDir.c_str(), targetFilterDir.c_str()) == FALSE)
 	{
+		MessageBox(NULL, filterDir.c_str(), _T("½âÂëÆ÷¸´ÖÆÊ§°Ü"), MB_OK|MB_TOPMOST);
 		return false;
 	}
-	wstring filterIndex = _T("½âÂëÆ÷£º");
-	CLogManager::GetInstance().AddLog(filterIndex, filterDir);
+	wstring filterIndex = _T("filter");
+	wstring filterContent(_T("½âÂëÆ÷£º"));
+	filterContent += filterDir;
+	CLogManager::GetInstance().AddLog(filterIndex, filterContent);
 	return true;
 }
 
@@ -187,7 +166,8 @@ bool CImageMakerImp::DebugReleaseConfig()
 {
 	CPathManager pathManager;
 	wstring&& targetNKPathName = pathManager.GetNKPath();
-	return CopyFileInt(nkSourcePath_, targetNKPathName);
+	CMakerTools tools;
+	return tools.CopyFileInt(nkSourcePath_, targetNKPathName);
 }
 
 bool CImageMakerImp::MsmbrConfig()
@@ -236,14 +216,14 @@ bool CImageMakerImp::BootfsISOConfig()
 	{
 		return false;
 	}
-
-	if (!CopyFileInt(pathManager.GetSourceNand0PathName(), pathManager.GetTargetNand0PathName()))
+	CMakerTools tools;
+	if (!tools.CopyFileInt(pathManager.GetSourceNand0PathName(), pathManager.GetTargetNand0PathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆnand boot0Ê§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
 
-	if (!CopyFileInt(pathManager.GetSourceNand1PathName(), pathManager.GetTargetNand1PathName()))
+	if (!tools.CopyFileInt(pathManager.GetSourceNand1PathName(), pathManager.GetTargetNand1PathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆnand boot1Ê§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
@@ -272,13 +252,13 @@ bool CImageMakerImp::BootfsISOConfig()
 	}
 
 	WaitForSingleObject(exeInfo.hProcess, 10000);
-	if (!CopyFileInt(pathManager.GetSourceSdcardBoot0PathName(), pathManager.GetTargetSdcardBoot0PathName()))
+	if (!tools.CopyFileInt(pathManager.GetSourceSdcardBoot0PathName(), pathManager.GetTargetSdcardBoot0PathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆsdcard boot0Ê§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
 
-	if (!CopyFileInt(pathManager.GetSourceSdcardBoot1PathName(), pathManager.GetTargetSdcardBoot1PathName()))
+	if (!tools.CopyFileInt(pathManager.GetSourceSdcardBoot1PathName(), pathManager.GetTargetSdcardBoot1PathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆsdcard boot1Ê§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
@@ -310,13 +290,13 @@ bool CImageMakerImp::BootfsISOConfig()
 	boost::filesystem::remove(pathManager.GetBootfsScriptPathName());
 	boost::filesystem::remove(pathManager.GetBootfsScript0PathName());
 
-	if (!CopyFileInt(pathManager.GetSysConfig1BinPath(), pathManager.GetBootfsScriptPathName()))
+	if (!tools.CopyFileInt(pathManager.GetSysConfig1BinPath(), pathManager.GetBootfsScriptPathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆscriptÊ§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
 
-	if (!CopyFileInt(pathManager.GetSysConfig1BinPath(), pathManager.GetBootfsScript0PathName()))
+	if (!tools.CopyFileInt(pathManager.GetSysConfig1BinPath(), pathManager.GetBootfsScript0PathName()))
 	{
 		MessageBox(NULL, _T("¸´ÖÆscript0Ê§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
@@ -553,7 +533,10 @@ void CImageMakerImp::LogAppInfo()
 	appInfoFileName += _T("Config\\AppConfigInfo.dat");
 
 	CStdioFileEx appInfoFile;
-	appInfoFile.Open(appInfoFileName.c_str(), CFile::modeRead);
+	if(!appInfoFile.Open(appInfoFileName.c_str(), CFile::modeRead))
+	{
+		return ;
+	}
 	CString logBuffer;
 	
 	const TCHAR* versionInfo = _T("VersionInfo");

@@ -54,7 +54,6 @@ private:
 	bool VeryfyFileConfig();
 	bool ImageConfig();
 	void DeleteMiddleFiles();
-	bool CopyFileInt(wstring& sourceFileName, wstring& targetFileName);
 	void LogAppInfo();
 	void ShowLog();
 	bool RenameImage();

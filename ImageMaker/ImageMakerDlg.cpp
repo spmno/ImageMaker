@@ -352,40 +352,21 @@ void CImageMakerDlg::OnBnClickedButtonBootload()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CPathManager pathManager;
-
-
-	BROWSEINFO  bi;
-	bi.hwndOwner=NULL;
-	
-	bi.pszDisplayName=NULL;
-	bi.lpszTitle=_T("请选择BOOTLOAD目录(eGon)");
-	bi.ulFlags=0;
-	bi.lpfn =NULL;
-	bi.iImage =0;
-	
-	LPITEMIDLIST pidlSource = NULL;
-	ULONG nCharsParsed = 0;
-	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
-	LPSHELLFOLDER pShellFolder = NULL;
-	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
-	TCHAR topDir[MAX_PATH];
-	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
-	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
-	bi.pidlRoot=pidlSource;
-	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
-	pShellFolder->Release();
-	if(!pidl)
-		return;
-	TCHAR  szDisplayName[255];
-	SHGetPathFromIDList(pidl,szDisplayName);
-
 	CMakerTools tools;
-	tools.CopyFolder(szDisplayName, pathManager.GetWorkSpacePath().c_str());
+	wstring title(_T("请选择BOOTLOAD目录(eGon)"));
+	wstring sourceBootloadDir;
+	if (!tools.SelectDir(title, sourceBootloadDir))
+	{
+		MessageBox(_T("选择BOOTLOAD目录失败"));
+		return ;
+	}
+
+	tools.CopyFolder(sourceBootloadDir.c_str(), pathManager.GetWorkSpacePath().c_str());
 	wstring index = _T("BootLoad");
 	wstring logContent(_T("BootLoadPath:"));
-	logContent += szDisplayName;
+	logContent += sourceBootloadDir;
 	CLogManager::GetInstance().AddLog(index, logContent);
-	//MessageBox(str,NULL,MB_OK);
+
 }
 
 
@@ -393,42 +374,26 @@ void CImageMakerDlg::OnBnClickedButtonApp()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CPathManager pathManager;
-	BROWSEINFO  bi;
-	bi.hwndOwner=NULL;
-	bi.pidlRoot=NULL;
-	bi.pszDisplayName=NULL;
-	bi.lpszTitle=_T("请选择APP目录");
-	bi.ulFlags=0;
-	bi.lpfn =NULL;
-	bi.iImage =0;
-	LPITEMIDLIST pidlSource = NULL;
-	ULONG nCharsParsed = 0;
-	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
-	LPSHELLFOLDER pShellFolder = NULL;
-	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
-	TCHAR topDir[MAX_PATH];
-	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
-	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
-	bi.pidlRoot=pidlSource;
-	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
-	pShellFolder->Release();
-	if(!pidl)
-		return;
-	TCHAR  szDisplayName[255];
-	SHGetPathFromIDList(pidl,szDisplayName);
+	CMakerTools tools;
+	wstring title(_T("请选择APP目录"));
+	wstring sourceAppDir;
+	if (!tools.SelectDir(title, sourceAppDir))
+	{
+		MessageBox(_T("选择APP目录失败"));
+		return ;
+	}
 	wstring rootRootPath(pathManager.GetRootPath());
-	rootRootPath += _T("\\root");
+	rootRootPath += _T("root");
 	wstring appPath(rootRootPath);
 	appPath += _T("\\F33APP");
 	boost::filesystem::remove_all(appPath);
 	Sleep(1000);
-	CMakerTools tools;
-	tools.CopyFolder(szDisplayName, rootRootPath.c_str());
+
+	tools.CopyFolder(sourceAppDir.c_str(), rootRootPath.c_str());
 	wstring index = _T("App");
 	wstring logContent(_T("AppPath:"));
-	logContent += szDisplayName;
+	logContent += sourceAppDir;
 	CLogManager::GetInstance().AddLog(index, logContent);
-	//MessageBox(str,NULL,MB_OK);
 }
 
 
@@ -436,35 +401,18 @@ void CImageMakerDlg::OnBnClickedButtonBootfs()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CPathManager pathManager;
-	BROWSEINFO  bi;
-	bi.hwndOwner=NULL;
-	bi.pidlRoot=NULL;
-	bi.pszDisplayName=NULL;
-	bi.lpszTitle=_T("请选择BootFS目录");
-	bi.ulFlags=0;
-	bi.lpfn =NULL;
-	bi.iImage =0;
-	LPITEMIDLIST pidlSource = NULL;
-	ULONG nCharsParsed = 0;
-	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidlSource);
-	LPSHELLFOLDER pShellFolder = NULL;
-	HRESULT hr = SHGetDesktopFolder(&pShellFolder);
-	TCHAR topDir[MAX_PATH];
-	_tcscpy(topDir, pathManager.GetTopDirPath().c_str());
-	hr = pShellFolder->ParseDisplayName(NULL, NULL, topDir, &nCharsParsed, &pidlSource, NULL);
-	bi.pidlRoot=pidlSource;
-	LPCITEMIDLIST pidl=SHBrowseForFolder(&bi);
-	pShellFolder->Release();
-	if(!pidl)
-		return;
-	TCHAR  szDisplayName[255];
-	SHGetPathFromIDList(pidl,szDisplayName);
-	
 	CMakerTools tools;
-	tools.CopyFolder(szDisplayName, pathManager.GetRootPath().c_str());
+	wstring title(_T("请选择BootFS目录"));
+	wstring sourceBootfsDir;
+	if (!tools.SelectDir(title, sourceBootfsDir))
+	{
+		MessageBox(_T("选择BOOTFS目录失败"));
+		return ;
+	}
+	tools.CopyFolder(sourceBootfsDir.c_str(), pathManager.GetRootPath().c_str());
 	wstring index = _T("Bootfs");
 	wstring logContent(_T("BootfsPath:"));
-	logContent += szDisplayName;
+	logContent += sourceBootfsDir;
 	CLogManager::GetInstance().AddLog(index, logContent);
 }
 

@@ -91,28 +91,37 @@ BOOL CImageMakerDlg::OnInitDialog()
 	CPathManager pathManager;
 	logoFilePath_ = pathManager.GetLogo1Path().c_str();			// 获取图片路径
 	char multiPathName[MAX_PATH];
-	WideCharToMultiByte(GetACP(), 0, logoFilePath_, logoFilePath_.GetLength()+1, multiPathName, MAX_PATH, NULL, NULL);
-	IplImage* ipl = cvLoadImage( multiPathName, 1 );	// 读取图片、缓存到一个局部变量 ipl 中
-	if( !ipl )									// 判断是否成功读取图片
-		return FALSE;
-	if( logo1Image_ )								// 对上一幅显示的图片数据清零
-		cvZero( logo1Image_ );
+
+	if (boost::filesystem::exists(logoFilePath_.GetBuffer()))
+	{
+		WideCharToMultiByte(GetACP(), 0, logoFilePath_, logoFilePath_.GetLength()+1, multiPathName, MAX_PATH, NULL, NULL);
+		IplImage* ipl = cvLoadImage( multiPathName, 1 );	// 读取图片、缓存到一个局部变量 ipl 中
+		if( !ipl )									// 判断是否成功读取图片
+			return FALSE;
+		if( logo1Image_ )								// 对上一幅显示的图片数据清零
+			cvZero( logo1Image_ );
 	
-	ResizeImage( ipl, 1 );	// 对读入的图片进行缩放，使其宽或高最大值者刚好等于 256，再复制到 TheImage 中
-	ShowImage( logo1Image_, IDC_STATIC_LOGO1 );			// 调用显示图片函数	
-	cvReleaseImage( &ipl );	
+		ResizeImage( ipl, 1 );	// 对读入的图片进行缩放，使其宽或高最大值者刚好等于 256，再复制到 TheImage 中
+		ShowImage( logo1Image_, IDC_STATIC_LOGO1 );			// 调用显示图片函数	
+		cvReleaseImage( &ipl );	
+	}
+
+
+	if (boost::filesystem::exists(logo2FilePath_.GetBuffer()))
+	{
+		logo2FilePath_ = pathManager.GetLogo2Path().c_str();	// 获取图片路径
+		WideCharToMultiByte(GetACP(), 0, logo2FilePath_, logo2FilePath_.GetLength()+1, multiPathName, MAX_PATH, NULL, NULL);
+		IplImage* ipl2 = cvLoadImage( multiPathName, 1 );	// 读取图片、缓存到一个局部变量 ipl 中
+		if( !ipl2 )									// 判断是否成功读取图片
+			return FALSE;
+		if( logo2Image_ )								// 对上一幅显示的图片数据清零
+			cvZero( logo2Image_ );
 	
-	logo2FilePath_ = pathManager.GetLogo2Path().c_str();	// 获取图片路径
-	WideCharToMultiByte(GetACP(), 0, logo2FilePath_, logo2FilePath_.GetLength()+1, multiPathName, MAX_PATH, NULL, NULL);
-	IplImage* ipl2 = cvLoadImage( multiPathName, 1 );	// 读取图片、缓存到一个局部变量 ipl 中
-	if( !ipl2 )									// 判断是否成功读取图片
-		return FALSE;
-	if( logo2Image_ )								// 对上一幅显示的图片数据清零
-		cvZero( logo2Image_ );
-	
-	ResizeImage( ipl2, 2 );	// 对读入的图片进行缩放，使其宽或高最大值者刚好等于 256，再复制到 TheImage 中
-	ShowImage( logo2Image_, IDC_STATIC_LOGO2 );			// 调用显示图片函数	
-	cvReleaseImage( &ipl2 );						// 释放 ipl 占用的内存// 释放 ipl 占用的内存
+		ResizeImage( ipl2, 2 );	// 对读入的图片进行缩放，使其宽或高最大值者刚好等于 256，再复制到 TheImage 中
+		ShowImage( logo2Image_, IDC_STATIC_LOGO2 );			// 调用显示图片函数	
+		cvReleaseImage( &ipl2 );			// 释放 ipl 占用的内存// 释放 ipl 占用的内存
+	}
+			
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -369,6 +378,10 @@ void CImageMakerDlg::OnBnClickedButtonBootload()
 		return ;
 	}
 
+	if (sourceBootloadDir.find(_T("eCon")) == wstring::npos)
+	{
+		sourceBootloadDir += _T("\\eGon");
+	}
 	tools.CopyFolder(sourceBootloadDir.c_str(), pathManager.GetWorkSpacePath().c_str());
 	wstring index = _T("BootLoad");
 	wstring logContent(_T("BootLoadPath:"));
@@ -397,6 +410,10 @@ void CImageMakerDlg::OnBnClickedButtonApp()
 	boost::filesystem::remove_all(appPath);
 	Sleep(1000);
 
+	if (sourceAppDir.find(_T("F33APP")))
+	{
+		sourceAppDir += _T("\\F33APP");
+	}
 	tools.CopyFolder(sourceAppDir.c_str(), rootRootPath.c_str());
 	wstring index = _T("App");
 	wstring logContent(_T("AppPath:"));

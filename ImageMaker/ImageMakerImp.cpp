@@ -106,7 +106,7 @@ bool CImageMakerImp::LCDConfig()
 
 	CPathManager pathManager;
 	wstring&& lcdPath = pathManager.GetLCDPath();
-	wstring targetPathName = lcdPath + _T("sys_config1.fex");
+	wstring targetPathName = pathManager.GetSysConfig1Path();
 	wstring sourcePathName(lcdPath);
 	boost::wformat projectFormat(_T("Project : %1%."));
 	boost::wformat projectFileNameFormat(_T("sys_config1_%1%.fex"));
@@ -135,11 +135,7 @@ bool CImageMakerImp::LCDConfig()
 	{
 		filterDir += _T("Filter\\H8033V\\Filter");
 	}
-	else if (projectName_.compare(_T("DS4389GDA")) == 0)
-	{
-		filterDir += _T("Filter\\DS4389GDA\\Filter");
-	}
-	else if (projectName_.compare(_T("BM-5133V")) == 0)
+	else 
 	{
 		filterDir += _T("Filter\\DS4389GDA\\Filter");
 	}
@@ -157,7 +153,7 @@ bool CImageMakerImp::LCDConfig()
 		return false;
 	}
 	wstring filterIndex = _T("filter");
-	wstring filterContent(_T("½âÂëÆ÷£º"));
+	wstring filterContent(_T("Filter£º"));
 	filterContent += filterDir;
 	CLogManager::GetInstance().AddLog(filterIndex, filterContent);
 	return true;
@@ -405,7 +401,7 @@ bool CImageMakerImp::ImageConfig()
 		return false;
 	}
 	WaitForSingleObject(exeInfo.hProcess, 10000);
-
+	/*
 	exeInfo.cbSize = sizeof(exeInfo);
 	exeInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 	exeInfo.hwnd = NULL;
@@ -421,7 +417,9 @@ bool CImageMakerImp::ImageConfig()
 		MessageBox(NULL, _T("datacopyÊ§°Ü"), NULL, MB_OK|MB_TOPMOST);
 		return false;
 	}
+	
 	WaitForSingleObject(exeInfo.hProcess, 10000);
+	*/
 	return true;
 }
 
@@ -487,19 +485,27 @@ bool CImageMakerImp::RenameImage()
 	{
 		return false;
 	}
+
+	wstring newPath;
 	if (!imageTail_.empty())
 	{
 		
+		boost::wformat newPathFormat(_T("%1%wdk3_%2%_%3%.img"));
+		newPathFormat % pathManager.GetRootPath();
+		newPathFormat % projectName_;
+		newPathFormat % imageTail_;
+		newPath = newPathFormat.str();
+
+	}
+	else
+	{
 		boost::wformat newPathFormat(_T("%1%wdk3_%2%.img"));
 		newPathFormat % pathManager.GetRootPath();
-		newPathFormat % imageTail_;
-		
-		wstring newPath = newPathFormat.str();
-		
-		boost::filesystem::rename(pathManager.GetImgPath(), newPath);
-
-		//MessageBox(NULL, pathManager.GetImgPath().c_str(), newPath.c_str(), MB_OK|MB_TOPMOST);
+		newPathFormat % projectName_;		
+		newPath = newPathFormat.str();
 	}
+
+	boost::filesystem::rename(pathManager.GetImgPath(), newPath);
 	return true;
 }
 

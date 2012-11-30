@@ -41,8 +41,7 @@ wstring& CAreaHelper::GetAreaName(const wstring& code)
 
 	if (lua_istable(L, -1))
 	{
-		GetField(L, "locale");
-		
+		GetField(L, "language");
 	}
 	return areaName_;
 }

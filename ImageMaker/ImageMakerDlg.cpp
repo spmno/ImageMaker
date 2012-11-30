@@ -33,6 +33,7 @@ CImageMakerDlg::CImageMakerDlg(CWnd* pParent /*=NULL*/)
 	, memorySize_(0)
 	, nkPathName_(_T(""))
 	, logoFilePath_(_T(""))
+	, logo2FilePath_(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -90,6 +91,7 @@ BOOL CImageMakerDlg::OnInitDialog()
 
 	CPathManager pathManager;
 	logoFilePath_ = pathManager.GetLogo1Path().c_str();			// 获取图片路径
+	logo2FilePath_ = pathManager.GetLogo2Path().c_str();			// 获取图片路径
 	char multiPathName[MAX_PATH];
 
 	if (boost::filesystem::exists(logoFilePath_.GetBuffer()))
@@ -183,8 +185,8 @@ void CImageMakerDlg::OnBnClickedButtonSelectNk()
 		{
 			wstring codeName = nkName.substr(splitPostion+1, 4);
 			CAreaHelper areaHelper;
-			areaHelper.GetAreaName(codeName);
-			imageMakerImp_.SetImageTail(codeName);
+			wstring& areaCode = areaHelper.GetAreaName(codeName);
+			imageMakerImp_.SetImageTail(areaCode);
 		}
 		else
 		{

@@ -153,7 +153,7 @@ bool CImageMakerImp::LCDConfig()
 		return false;
 	}
 	wstring filterIndex = _T("filter");
-	wstring filterContent(_T("Filter£º"));
+	wstring filterContent(_T("Filter:"));
 	filterContent += filterDir;
 	CLogManager::GetInstance().AddLog(filterIndex, filterContent);
 	return true;

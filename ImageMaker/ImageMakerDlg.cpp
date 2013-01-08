@@ -123,7 +123,8 @@ BOOL CImageMakerDlg::OnInitDialog()
 		ShowImage( logo2Image_, IDC_STATIC_LOGO2 );			// 调用显示图片函数	
 		cvReleaseImage( &ipl2 );			// 释放 ipl 占用的内存// 释放 ipl 占用的内存
 	}
-			
+	memorySize_ = 1;
+	UpdateData(FALSE);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -209,6 +210,7 @@ void CImageMakerDlg::OnBnClickedButtonMake()
 	if (nkPathName_.GetLength() == 0)
 	{
 		MessageBox(_T("请选择NK"));
+		makeButton_.EnableWindow();
 		return ;
 	}
 

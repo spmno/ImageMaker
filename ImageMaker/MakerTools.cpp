@@ -117,3 +117,41 @@ bool CMakerTools::ExcuteCommand(const wstring& sourceExeFilePath, const wstring&
 	WaitForSingleObject(exeInfo.hProcess, 10000);
 	return true;
 }
+
+BOOL CMakerTools::CopyFolderWithoutDir(CString strSrcPath,CString strDesPath)
+{
+
+	if( !PathIsDirectory( strSrcPath ))
+	{      
+		return FALSE;
+	}
+	if ( !PathIsDirectory( strDesPath ) )//目的目录不存在，新建文件夹
+	{
+		CreateDirectory(strDesPath, NULL); 
+	}
+ 
+	if( strSrcPath.GetAt(strSrcPath.GetLength()-1) != '\\' )
+		strSrcPath += '\\';
+	if( strDesPath.GetAt(strDesPath.GetLength()-1) != '\\' )
+		strDesPath += '\\';
+	BOOL bRet = FALSE; // 因为源目录不可能为空，所以该值一定会被修改
+	CFileFind ff; 
+	BOOL bFound = ff.FindFile(strSrcPath+"*",   0); 
+	while(bFound)      // 递归拷贝
+	{ 
+		bFound = ff.FindNextFile(); 
+		if( ff.GetFileName() == "." || ff.GetFileName() == ".." ) 
+			continue;
+		CString strSubSrcPath = ff.GetFilePath();
+		CString strSubDespath = strSubSrcPath;
+		strSubDespath.Replace(strSrcPath, strDesPath);
+		if( ff.IsDirectory() )
+			bRet = CopyFolderWithoutDir(strSubSrcPath, strSubDespath);     // 递归拷贝文件夹
+		else
+			bRet = CopyFile(strSubSrcPath, strSubDespath, FALSE);   // 拷贝文件
+		//if ( !bRet )
+			//break;
+	} 
+	ff.Close();
+	return bRet;
+}

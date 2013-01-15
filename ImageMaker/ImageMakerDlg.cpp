@@ -438,7 +438,9 @@ void CImageMakerDlg::OnBnClickedButtonBootfs()
 		MessageBox(_T("Ñ¡ÔñBOOTFSÄ¿Â¼Ê§°Ü"));
 		return ;
 	}
-	tools.CopyFolder(sourceBootfsDir.c_str(), pathManager.GetRootPath().c_str());
+	wstring bootfsDir(pathManager.GetRootPath());
+	bootfsDir += _T("bootfs");
+	tools.CopyFolderWithoutDir(sourceBootfsDir.c_str(),bootfsDir.c_str());
 	wstring index = _T("Bootfs");
 	wstring logContent(_T("BootfsPath:"));
 	logContent += sourceBootfsDir;

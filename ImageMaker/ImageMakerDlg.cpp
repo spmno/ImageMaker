@@ -254,6 +254,10 @@ void CImageMakerDlg::OnBnClickedButtonSelectLogo()
 		_T("image files (*.bmp; *.jpg) |*.bmp; *.jpg | All Files (*.*) |*.*||"), NULL
 		);										// 选项图片的约定
 	dlg.m_ofn.lpstrTitle = _T("Open Image");	// 打开文件对话框的标题名
+	CPathManager pathManager;
+	wstring logoPath(pathManager.GetTopDirPath());
+	logoPath += _T("Logo\\");
+	dlg.m_ofn.lpstrInitialDir = logoPath.c_str();
 	if( dlg.DoModal() != IDOK )					// 判断是否获得图片
 		return;
 	
@@ -283,6 +287,10 @@ void CImageMakerDlg::OnBnClickedButtonSelectLogo2()
 		_T("image files (*.bmp; *.jpg) |*.bmp; *.jpg | All Files (*.*) |*.*||"), NULL
 		);										// 选项图片的约定
 	dlg.m_ofn.lpstrTitle = _T("Open Image");	// 打开文件对话框的标题名
+	CPathManager pathManager;
+	wstring logoPath(pathManager.GetTopDirPath());
+	logoPath += _T("Logo\\");
+	dlg.m_ofn.lpstrInitialDir = logoPath.c_str();
 	if( dlg.DoModal() != IDOK )					// 判断是否获得图片
 		return;
 	

@@ -517,8 +517,44 @@ void CImageMakerImp::NKConfig()
 	CLogManager::GetInstance().AddLog(nkIndex, nkLogContent);
 }
 
+bool CImageMakerImp::DelAndCopyLogoFile()
+{
+	
+	CPathManager pathManager;
+	wstring sourceLogoDir(pathManager.GetTopDirPath());
+	sourceLogoDir += _T("Logo\\");
+	sourceLogoDir += projectName_;
+	sourceLogoDir += _T("\\Custom\\");
+	wstring targetLogoDir(pathManager.GetRootPath());
+	targetLogoDir += _T("root\\Logo\\");
+	
+	if (boost::filesystem::exists(targetLogoDir)) {
+		boost::system::error_code errorCode;
+		boost::filesystem::remove_all(targetLogoDir, errorCode);
+		if (errorCode.value() == 0x20) {
+			MessageBox(NULL, _T("目录中有文件被占用"), targetLogoDir.c_str(), MB_OK|MB_TOPMOST);
+			return false;
+		}
+		Sleep(200);
+		boost::filesystem::create_directory(targetLogoDir);
+	} else {
+		boost::filesystem::create_directory(targetLogoDir);
+	}
+	
+	if (boost::filesystem::exists(sourceLogoDir)) {
+		CMakerTools makerTools;
+		if (!makerTools.CopyFolderWithoutDir(sourceLogoDir.c_str(), targetLogoDir.c_str())) {
+			MessageBox(NULL, _T("copy custom image fail."), sourceLogoDir.c_str(), MB_OK|MB_TOPMOST);
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 void CImageMakerImp::FunctionBind()
 {
+	functionContainer_.push_back(bind(&CImageMakerImp::DelAndCopyLogoFile, this));
 	functionContainer_.push_back(bind(&CImageMakerImp::DeleteNKAndImg, this));
 	functionContainer_.push_back(bind(&CImageMakerImp::MemoryConfig, this));
 	functionContainer_.push_back(bind(&CImageMakerImp::LCDConfig, this));

@@ -13,14 +13,6 @@ public:
 		MEMORY_512M,
 	}MEMORY_SIZE;
 
-	typedef enum
-	{
-		PROJECT_INVALID_PARAM = -1,
-		PROJECT_4389V,
-		PROJECT_8033V,
-		PROJECT_5133V,
-		PROJECT_EVB,
-	}PRJECT_KIND;
 
 	CImageMakerImp(void);
 	~CImageMakerImp(void);
@@ -59,6 +51,7 @@ private:
 	void ShowLog();
 	bool RenameImage();
 	void FunctionBind();
+	bool DelAndCopyLogoFile();
 	vector<function<bool(void)> > functionContainer_;
 	MEMORY_SIZE memorySize_;
 	wstring projectName_;

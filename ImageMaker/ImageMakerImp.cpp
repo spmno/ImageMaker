@@ -130,7 +130,26 @@ bool CImageMakerImp::LCDConfig()
 	}
 
 	wstring filterDir(pathManager.GetTopDirPath());
-	
+
+	filterDir += _T("Filter\\");
+	filterDir += projectName_;
+	filterDir += _T("\\Filter");
+
+	wstring targetFilterDir(pathManager.GetRootPath());
+	targetFilterDir += _T("root");
+	wstring targetFilterPath(pathManager.GetRootPath());
+	targetFilterPath += _T("root\\Filter");
+
+	if (!boost::filesystem::exists(filterDir)) {
+		boost::filesystem::remove_all(targetFilterPath);
+		Sleep(1000);
+		wstring filterIndex = _T("filter");
+		wstring filterContent(_T("Filter:"));
+		filterContent += _T("无相应目录");
+		CLogManager::GetInstance().AddLog(filterIndex, filterContent);
+		return true;
+	}
+	/*
 	if (projectName_.compare(_T("H8033V")) == 0)
 	{
 		filterDir += _T("Filter\\H8033V\\Filter");
@@ -139,10 +158,8 @@ bool CImageMakerImp::LCDConfig()
 	{
 		filterDir += _T("Filter\\DS4389GDA\\Filter");
 	}
-	wstring targetFilterDir(pathManager.GetRootPath());
-	targetFilterDir += _T("root");
-	wstring targetFilterPath(pathManager.GetRootPath());
-	targetFilterPath += _T("root\\Filter");
+	*/
+
 
 	boost::filesystem::remove_all(targetFilterPath);
 	Sleep(1000);
@@ -541,7 +558,7 @@ bool CImageMakerImp::DelAndCopyLogoFile()
 		boost::filesystem::create_directory(targetLogoDir);
 	}
 	
-	if (boost::filesystem::exists(sourceLogoDir)) {
+	if (boost::filesystem::exists(sourceLogoDir) && (!boost::filesystem::is_empty(sourceLogoDir))) {
 		CMakerTools makerTools;
 		if (!makerTools.CopyFolderWithoutDir(sourceLogoDir.c_str(), targetLogoDir.c_str())) {
 			MessageBox(NULL, _T("copy custom image fail."), sourceLogoDir.c_str(), MB_OK|MB_TOPMOST);

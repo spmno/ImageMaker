@@ -129,8 +129,8 @@ bool CImageMakerImp::LCDConfig()
 		return false;
 	}
 
+	//copy filter
 	wstring filterDir(pathManager.GetTopDirPath());
-
 	filterDir += _T("Filter\\");
 	filterDir += projectName_;
 	filterDir += _T("\\Filter");
@@ -145,21 +145,10 @@ bool CImageMakerImp::LCDConfig()
 		Sleep(1000);
 		wstring filterIndex = _T("filter");
 		wstring filterContent(_T("Filter:"));
-		filterContent += _T("无相应目录");
+		filterContent += _T("no filter");
 		CLogManager::GetInstance().AddLog(filterIndex, filterContent);
 		return true;
 	}
-	/*
-	if (projectName_.compare(_T("H8033V")) == 0)
-	{
-		filterDir += _T("Filter\\H8033V\\Filter");
-	}
-	else 
-	{
-		filterDir += _T("Filter\\DS4389GDA\\Filter");
-	}
-	*/
-
 
 	boost::filesystem::remove_all(targetFilterPath);
 	Sleep(1000);
@@ -173,6 +162,26 @@ bool CImageMakerImp::LCDConfig()
 	wstring filterContent(_T("Filter:"));
 	filterContent += filterDir;
 	CLogManager::GetInstance().AddLog(filterIndex, filterContent);
+
+
+	//copy video txt
+	wstring videoFile(pathManager.GetTopDirPath());
+	videoFile += _T("mode\\");
+	videoFile += projectName_;
+	videoFile += _T("\\video.txt");
+
+	wstring targetVideoFile(pathManager.GetRootPath());
+	targetVideoFile += _T("root\\video.txt");
+
+	if (!boost::filesystem::exists(videoFile)) {
+		MessageBox(NULL, videoFile.c_str(), _T("找不到文件"), MB_OK|MB_TOPMOST);
+		ExitProcess(-1);
+	}
+	
+	if (CopyFile(videoFile.c_str(), targetVideoFile.c_str(), FALSE) == FALSE) {
+		MessageBox(NULL, targetVideoFile.c_str(), videoFile.c_str(), MB_OK|MB_TOPMOST);
+		return false;
+	}
 	return true;
 }
 

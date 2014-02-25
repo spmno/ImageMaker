@@ -103,7 +103,6 @@ bool CImageMakerImp::MemoryConfig()
 
 bool CImageMakerImp::LCDConfig()
 {
-
 	CPathManager pathManager;
 	wstring&& lcdPath = pathManager.GetLCDPath();
 	wstring targetPathName = pathManager.GetSysConfig1Path();
@@ -182,6 +181,14 @@ bool CImageMakerImp::LCDConfig()
 		MessageBox(NULL, targetVideoFile.c_str(), videoFile.c_str(), MB_OK|MB_TOPMOST);
 		return false;
 	}
+
+	//copy amp file
+	bool result = CopyAmp();
+
+	if (!result) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -575,6 +582,31 @@ bool CImageMakerImp::DelAndCopyLogoFile()
 		}
 	}
 	
+	return true;
+}
+
+bool CImageMakerImp::CopyAmp()
+{
+	CMakerTools tools;
+	CPathManager pathManager;
+	wstring ampFileDir(pathManager.GetTopDirPath());
+	ampFileDir += _T("awp\\");
+	ampFileDir += projectName_;
+	//ampFileDir += _T("\\");
+
+	wstring targetAmpDir(pathManager.GetRootPath());
+	targetAmpDir += _T("root\\system");
+
+	if (!boost::filesystem::exists(ampFileDir)) {
+		MessageBox(NULL, ampFileDir.c_str(), _T("找不到全景泊车目录"), MB_OK|MB_TOPMOST);
+		ExitProcess(-1);
+	}
+	
+	if (tools.CopyFolderWithoutDir(ampFileDir.c_str(), targetAmpDir.c_str()) == FALSE) {
+		MessageBox(NULL, ampFileDir.c_str(), ampFileDir.c_str(), MB_OK|MB_TOPMOST);
+		return false;
+	}
+
 	return true;
 }
 

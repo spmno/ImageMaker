@@ -52,6 +52,7 @@ private:
 	bool RenameImage();
 	void FunctionBind();
 	bool DelAndCopyLogoFile();
+	bool CopyAmp();
 	vector<function<bool(void)> > functionContainer_;
 	MEMORY_SIZE memorySize_;
 	wstring projectName_;

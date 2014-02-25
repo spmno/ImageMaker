@@ -45,7 +45,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>D:\Program Files (x86)\Lua\5.1\include;D:\OpenCV\opencv\build\include;D:\boost;$(VCInstallDir)PlatformSDK\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Program Files (x86)\Lua\5.1\lib;D:\OpenCV\lib\Release;D:\boost\stage11\lib;$(VCInstallDir)PlatformSDK\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>E:\code\VOX\ImageTool\tool\workspace\light3</OutDir>
+    <OutDir>E:\code\VOX\ImageTool\tool\workspace\light3\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

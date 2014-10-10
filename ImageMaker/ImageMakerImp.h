@@ -53,6 +53,7 @@ private:
 	void FunctionBind();
 	bool DelAndCopyLogoFile();
 	bool CopyAmp();
+	bool CopyTrack();
 	vector<function<bool(void)> > functionContainer_;
 	MEMORY_SIZE memorySize_;
 	wstring projectName_;

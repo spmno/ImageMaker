@@ -103,6 +103,7 @@ bool CImageMakerImp::MemoryConfig()
 
 bool CImageMakerImp::LCDConfig()
 {
+
 	CPathManager pathManager;
 	wstring&& lcdPath = pathManager.GetLCDPath();
 	wstring targetPathName = pathManager.GetSysConfig1Path();
@@ -188,7 +189,7 @@ bool CImageMakerImp::LCDConfig()
 	if (!result) {
 		return false;
 	}
-
+	CopyTrack();
 	return true;
 }
 
@@ -598,8 +599,11 @@ bool CImageMakerImp::CopyAmp()
 	targetAmpDir += _T("root\\system");
 
 	if (!boost::filesystem::exists(ampFileDir)) {
-		MessageBox(NULL, ampFileDir.c_str(), _T("找不到全景泊车目录"), MB_OK|MB_TOPMOST);
-		ExitProcess(-1);
+		//MessageBox(NULL, ampFileDir.c_str(), _T("找不到全景泊车目录"), MB_OK|MB_TOPMOST);
+		boost::filesystem::remove_all(targetAmpDir.c_str());
+		boost::filesystem::create_directory((targetAmpDir.c_str()));
+		return true;
+		//ExitProcess(-1);
 	}
 	
 	if (tools.CopyFolderWithoutDir(ampFileDir.c_str(), targetAmpDir.c_str()) == FALSE) {
@@ -609,6 +613,31 @@ bool CImageMakerImp::CopyAmp()
 
 	return true;
 }
+
+bool CImageMakerImp::CopyTrack()
+{
+	CMakerTools tools;
+	CPathManager pathManager;
+	wstring trackFileFile(pathManager.GetTopDirPath());
+	trackFileFile += _T("track\\");
+	trackFileFile += projectName_;
+	trackFileFile += _T("\\track.bmp");
+
+	if (!boost::filesystem::exists(trackFileFile)) {
+		return false;
+	}
+
+	wstring targetTrackFile(pathManager.GetTopDirPath());
+	targetTrackFile += _T("tool\\workspace\\light3\\bootfs\\wince\\track.bmp");
+
+	if (tools.CopyFileInt(trackFileFile.c_str(), targetTrackFile.c_str()) == FALSE) {
+		MessageBox(NULL, trackFileFile.c_str(), trackFileFile.c_str(), MB_OK|MB_TOPMOST);
+		return false;
+	}
+
+	return true;
+}
+
 
 void CImageMakerImp::FunctionBind()
 {

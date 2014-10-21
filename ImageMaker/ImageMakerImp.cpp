@@ -103,7 +103,6 @@ bool CImageMakerImp::MemoryConfig()
 
 bool CImageMakerImp::LCDConfig()
 {
-
 	CPathManager pathManager;
 	wstring&& lcdPath = pathManager.GetLCDPath();
 	wstring targetPathName = pathManager.GetSysConfig1Path();
@@ -623,15 +622,18 @@ bool CImageMakerImp::CopyTrack()
 	trackFileFile += projectName_;
 	trackFileFile += _T("\\track.bmp");
 
-	if (!boost::filesystem::exists(trackFileFile)) {
-		return false;
-	}
-
 	wstring targetTrackFile(pathManager.GetTopDirPath());
 	targetTrackFile += _T("tool\\workspace\\light3\\bootfs\\wince\\track.bmp");
 
+	if ((!boost::filesystem::exists(trackFileFile)) | (!boost::filesystem::exists(targetTrackFile))) {
+		return false;
+	}
+
 	if (tools.CopyFileInt(trackFileFile.c_str(), targetTrackFile.c_str()) == FALSE) {
-		MessageBox(NULL, trackFileFile.c_str(), trackFileFile.c_str(), MB_OK|MB_TOPMOST);
+		wstring index = _T("CopyTrack");
+		wstring logContent(_T("TrackFileError:"));
+		logContent += targetTrackFile;
+		CLogManager::GetInstance().AddLog(index, logContent);
 		return false;
 	}
 

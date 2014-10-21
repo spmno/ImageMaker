@@ -15,9 +15,10 @@ public:
 		static CLogManager logManager;
 		return logManager;
 	}
-	void AddLog(const wstring& index, const wstring& content)
+	void AddLog(const wstring& index, const wstring& level, const wstring& content)
 	{
-		logContainer_[index] = content;
+		logContainer_[index].level = level;
+		logContainer_[index].content = content;
 	}
 	void PrintLog()
 	{
@@ -29,15 +30,21 @@ public:
 		{
 			for (auto logItem : logContainer_)
 			{
-				outPutLogFile << logItem.second.c_str() << endl;
+				outPutLogFile << logItem.second.level.c_str();
+				outPutLogFile << logItem.second.content.c_str() << endl;
 			}
 		}
 		logContainer_.clear();
 		Sleep(1000);
 
 	}
+
+	struct Log {
+		wstring level;
+		wstring content;
+	};
 private:
 	CLogManager(void);
-	map<wstring, wstring > logContainer_;
+	map<wstring, Log > logContainer_;
 };
 

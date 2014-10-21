@@ -396,10 +396,10 @@ void CImageMakerDlg::OnBnClickedButtonBootload()
 	}
 	tools.CopyFolder(sourceBootloadDir.c_str(), pathManager.GetWorkSpacePath().c_str());
 	wstring index = _T("BootLoad");
+	wstring level = _T("[INF]");
 	wstring logContent(_T("BootLoadPath:"));
 	logContent += sourceBootloadDir;
-	CLogManager::GetInstance().AddLog(index, logContent);
-
+	CLogManager::GetInstance().AddLog(index, level, logContent);
 }
 
 
@@ -428,9 +428,10 @@ void CImageMakerDlg::OnBnClickedButtonApp()
 	}
 	tools.CopyFolder(sourceAppDir.c_str(), rootRootPath.c_str());
 	wstring index = _T("App");
+	wstring level = _T("[INF]");
 	wstring logContent(_T("AppPath:"));
 	logContent += sourceAppDir;
-	CLogManager::GetInstance().AddLog(index, logContent);
+	CLogManager::GetInstance().AddLog(index, level, logContent);
 }
 
 
@@ -450,9 +451,10 @@ void CImageMakerDlg::OnBnClickedButtonBootfs()
 	bootfsDir += _T("bootfs");
 	tools.CopyFolderWithoutDir(sourceBootfsDir.c_str(),bootfsDir.c_str());
 	wstring index = _T("Bootfs");
+	wstring level = _T("[INF]");
 	wstring logContent(_T("BootfsPath:"));
 	logContent += sourceBootfsDir;
-	CLogManager::GetInstance().AddLog(index, logContent);
+	CLogManager::GetInstance().AddLog(index, level, logContent);
 }
 
 

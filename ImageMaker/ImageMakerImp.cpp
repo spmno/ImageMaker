@@ -96,13 +96,15 @@ bool CImageMakerImp::MemoryConfig()
 	
 	wstring logContent = logFormat.str();
 	wstring index = _T("Mem");
-	CLogManager::GetInstance().AddLog(index, logContent);
+	wstring level = _T("[INF]");
+	CLogManager::GetInstance().AddLog(index, level, logContent);
 	CMakerTools tools;
 	return tools.CopyFileInt(currentMemoryName, targetPathName);
 }
 
 bool CImageMakerImp::LCDConfig()
 {
+	CopyTrack();
 	CPathManager pathManager;
 	wstring&& lcdPath = pathManager.GetLCDPath();
 	wstring targetPathName = pathManager.GetSysConfig1Path();
@@ -119,8 +121,9 @@ bool CImageMakerImp::LCDConfig()
 		ExitProcess(-1);
 	}
 	wstring projectIndex = _T("Project");
+	wstring level = _T("[INF]");
 	wstring projectContent = projectFormat.str();
-	CLogManager::GetInstance().AddLog(projectIndex, projectContent);
+	CLogManager::GetInstance().AddLog(projectIndex, level, projectContent);
 	CMakerTools tools;
 	if (!tools.CopyFileInt(sourcePathName, targetPathName))
 	{
@@ -143,9 +146,10 @@ bool CImageMakerImp::LCDConfig()
 		boost::filesystem::remove_all(targetFilterPath);
 		Sleep(1000);
 		wstring filterIndex = _T("filter");
+		wstring level = _T("[ERR]");
 		wstring filterContent(_T("Filter:"));
 		filterContent += _T("no filter");
-		CLogManager::GetInstance().AddLog(filterIndex, filterContent);
+		CLogManager::GetInstance().AddLog(filterIndex, level, filterContent);
 		return true;
 	}
 
@@ -160,7 +164,7 @@ bool CImageMakerImp::LCDConfig()
 	wstring filterIndex = _T("filter");
 	wstring filterContent(_T("Filter:"));
 	filterContent += filterDir;
-	CLogManager::GetInstance().AddLog(filterIndex, filterContent);
+	CLogManager::GetInstance().AddLog(filterIndex, level, filterContent);
 
 
 	//copy video txt
@@ -488,12 +492,14 @@ void CImageMakerImp::LogAppInfo()
 		if (logBuffer.Find(versionInfo) != -1)
 		{
 			wstring versionLog = logBuffer.GetBuffer();
-			CLogManager::GetInstance().AddLog(versionInfo, versionLog);
+			wstring level = _T("[INF]");
+			CLogManager::GetInstance().AddLog(versionInfo, level, versionLog);
 		}
 		else if (logBuffer.Find(productNo) != -1)
 		{
 			wstring productNoLog = logBuffer.GetBuffer();
-			CLogManager::GetInstance().AddLog(productNo, productNoLog);
+			wstring level = _T("[INF]");
+			CLogManager::GetInstance().AddLog(productNo, level, productNoLog);
 		}
 	}
 	
@@ -545,9 +551,10 @@ bool CImageMakerImp::RenameImage()
 void CImageMakerImp::NKConfig()
 {
 	wstring nkIndex = _T("NK");
+	wstring level = _T("[INF]");
 	wstring nkLogContent(_T("NKPATH:"));
 	nkLogContent += nkSourcePath_;
-	CLogManager::GetInstance().AddLog(nkIndex, nkLogContent);
+	CLogManager::GetInstance().AddLog(nkIndex, level, nkLogContent);
 }
 
 bool CImageMakerImp::DelAndCopyLogoFile()
@@ -617,23 +624,46 @@ bool CImageMakerImp::CopyTrack()
 {
 	CMakerTools tools;
 	CPathManager pathManager;
-	wstring trackFileFile(pathManager.GetTopDirPath());
-	trackFileFile += _T("track\\");
-	trackFileFile += projectName_;
+	wstring trackFileDir(pathManager.GetTopDirPath());
+	trackFileDir += _T("track\\");
+	trackFileDir += projectName_;
+
+	wstring trackFileFile = trackFileDir;
 	trackFileFile += _T("\\track.bmp");
 
 	wstring targetTrackFile(pathManager.GetTopDirPath());
 	targetTrackFile += _T("tool\\workspace\\light3\\bootfs\\wince\\track.bmp");
 
-	if ((!boost::filesystem::exists(trackFileFile)) | (!boost::filesystem::exists(targetTrackFile))) {
+	try {
+		boost::filesystem::remove(targetTrackFile);
+	} catch (...) {
+		wstring index = _T("CopyTrack");
+		wstring level = _T("[ERR]");
+		wstring logContent(_T("TrackFileError:"));
+		logContent += targetTrackFile;
+		CLogManager::GetInstance().AddLog(index, level, logContent);
+		return false;
+	}
+
+	if (!boost::filesystem::exists(trackFileDir)) {
+		return false;
+	}
+
+	if (!boost::filesystem::exists(trackFileFile)) {
+		wstring index = _T("CopyTrack");
+		wstring level = _T("[ERR]");
+		wstring logContent(_T("TrackFileError:"));
+		logContent += targetTrackFile;
+		CLogManager::GetInstance().AddLog(index, level, logContent);
 		return false;
 	}
 
 	if (tools.CopyFileInt(trackFileFile.c_str(), targetTrackFile.c_str()) == FALSE) {
 		wstring index = _T("CopyTrack");
+		wstring level = _T("[ERR]");
 		wstring logContent(_T("TrackFileError:"));
 		logContent += targetTrackFile;
-		CLogManager::GetInstance().AddLog(index, logContent);
+		CLogManager::GetInstance().AddLog(index, level, logContent);
 		return false;
 	}
 
